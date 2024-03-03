@@ -32,7 +32,7 @@
   "main": "n/a",
   "bin": "lib/index.js",
   "module": "lib/index.js",
-  "name": "git-clone-sparse",
+  "name": "@ayan4m1/git-clone-sparse",
   "repository": {
     "type": "git",
     "url": "https://github.com/ayan4m1/git-clone-sparse"
