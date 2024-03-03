@@ -1,16 +1,27 @@
 # git-clone-sparse
 
-[![Package Version](https://badge.fury.io/js/git-clone-sparse.svg)](https://www.npmjs.com/package/git-clone-sparse)
+[![Package Version](https://badge.fury.io/js/@ayan4m1/git-clone-sparse.svg)](https://www.npmjs.com/package/@ayan4m1/git-clone-sparse)
 
 ## features
 
 - Written in TypeScript
 - Small footprint
+- Saves time when cloning large repos
 
 ## requirements
 
 - Node 18+
 
+## installation
+
+> npm i -g @ayan4m1/git-clone-sparse
+
 ## usage
 
-**TODO**
+> git-clone-sparse ./local-dir https://github.com/user/repo ./path1/ ./path2/
+
+OR
+
+> git-clone-sparse -g ./local-dir https://github.com/user/repo "\*\*/\*.safetensors"
+
+Each command creates a directory called `local-dir` in your current working directory and then clones the specified URL. If you use **glob mode**, pass the `-g` flag. If you want to use a list of directories instead, do not use the `-g` flag.
