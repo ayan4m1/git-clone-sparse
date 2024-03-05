@@ -32,16 +32,20 @@ const getPackageJsonPath = (): string =>
   resolve(getInstallDirectory(), '..', 'package.json');
 
 const isGitInstallValid = async (): Promise<boolean> => {
-  const [version] = await executeCommand({
-    command: "git -v | cut -d' ' -f3"
-  });
+  try {
+    const [version] = await executeCommand({
+      command: "git -v | cut -d' ' -f3"
+    });
 
-  const gitVersion = coerce(version);
-  if (!gitVersion) {
+    const gitVersion = coerce(version);
+    if (!gitVersion) {
+      return false;
+    }
+
+    return satisfies(gitVersion, '>=2.25.0');
+  } catch {
     return false;
   }
-
-  return satisfies(gitVersion, '>=2.25.0');
 };
 
 const executeCommand = async (
