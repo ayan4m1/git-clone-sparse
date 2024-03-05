@@ -123,7 +123,7 @@ export async function cloneSparse(
       throw new Error(`${cwd} already exists, refusing to overwrite it!`);
     }
 
-    console.log('Pre-flight checks passed, cloning repo...');
+    console.log('Pre-flight checks passed, performing bare clone...');
     paths = paths.map((path) => path.replace(/"/g, '').replace(/^\./, ''));
     await executeGitCommand(workingCopyParent, [
       'clone',
@@ -150,6 +150,7 @@ export async function cloneSparse(
       }
     }
     console.log('Performing final checkout...');
+    // todo: add progress bar
     await executeGitCommand(cwd, ['checkout']);
     console.log('Complete!');
   } catch (error) {
