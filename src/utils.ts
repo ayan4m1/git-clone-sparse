@@ -1,11 +1,11 @@
 import { existsSync } from 'fs';
 import { promisify } from 'util';
+import { program } from 'commander';
 import { fileURLToPath } from 'url';
 import { coerce, satisfies } from 'semver';
 import { mkdir, readFile, rm } from 'fs/promises';
 import { basename, dirname, resolve } from 'path';
 import { exec as rawExec, spawn } from 'child_process';
-import { program } from 'commander';
 
 export type ExecuteOptions = {
   cwd?: string;
@@ -25,16 +25,13 @@ const exec = promisify(rawExec);
 const createAppender = (array: string[]) => (chunk: string) =>
   array.push(chunk);
 
-export const getInstallDirectory = (): string =>
+const getInstallDirectory = (): string =>
   dirname(fileURLToPath(import.meta.url));
 
-export const getPackageJsonPath = (): string =>
+const getPackageJsonPath = (): string =>
   resolve(getInstallDirectory(), '..', 'package.json');
 
-export const getPackageVersion = async (): Promise<string> =>
-  JSON.parse(await readFile(getPackageJsonPath(), 'utf-8'))?.version;
-
-export const isGitInstallValid = async (): Promise<boolean> => {
+const isGitInstallValid = async (): Promise<boolean> => {
   const [version] = await executeCommand({
     command: "git -v | cut -d' ' -f3"
   });
@@ -47,7 +44,7 @@ export const isGitInstallValid = async (): Promise<boolean> => {
   return satisfies(gitVersion, '>=2.25.0');
 };
 
-export const executeCommand = async (
+const executeCommand = async (
   options: ExecuteOptions
 ): Promise<ExecuteResults> => {
   const { args, command, cwd } = options;
@@ -61,7 +58,7 @@ export const executeCommand = async (
   return [stdout, stderr];
 };
 
-export const executeGitCommand = (
+const executeGitCommand = (
   options: GitExecuteOptions
 ): Promise<ExecuteResults> =>
   new Promise(
@@ -90,6 +87,9 @@ export const executeGitCommand = (
       });
     }
   );
+
+export const getPackageVersion = async (): Promise<string> =>
+  JSON.parse(await readFile(getPackageJsonPath(), 'utf-8'))?.version;
 
 export async function cloneSparse(
   cwd: string,
