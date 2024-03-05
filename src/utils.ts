@@ -7,17 +7,6 @@ import { mkdir, readFile, rm } from 'fs/promises';
 import { basename, dirname, resolve } from 'path';
 import { exec as rawExec, spawn } from 'child_process';
 
-export type ExecuteOptions = {
-  cwd?: string;
-  command: string;
-  args?: string[];
-};
-
-export type GitExecuteOptions = {
-  cwd: string;
-  args?: string[];
-};
-
 export type ExecuteResults = [string, string];
 
 const exec = promisify(rawExec);
@@ -33,9 +22,7 @@ const getPackageJsonPath = (): string =>
 
 const isGitInstallValid = async (): Promise<boolean> => {
   try {
-    const [version] = await executeCommand({
-      command: "git -v | cut -d' ' -f3"
-    });
+    const [version] = await executeCommand("git -v | cut -d' ' -f3");
 
     const gitVersion = coerce(version);
     if (!gitVersion) {
@@ -49,9 +36,10 @@ const isGitInstallValid = async (): Promise<boolean> => {
 };
 
 const executeCommand = async (
-  options: ExecuteOptions
+  command: string,
+  cwd?: string,
+  args?: string[]
 ): Promise<ExecuteResults> => {
-  const { args, command, cwd } = options;
   const { stdout, stderr } = await exec(
     `${command} ${args?.join(' ') ?? ''}`.trim().replace(/\\n$/, ''),
     {
@@ -63,14 +51,14 @@ const executeCommand = async (
 };
 
 const executeGitCommand = (
-  options: GitExecuteOptions
+  cwd: string,
+  args?: string[]
 ): Promise<ExecuteResults> =>
   new Promise(
     (
       resolve: (value: ExecuteResults) => void,
       reject: (reason?: string | Error) => void
     ) => {
-      const { cwd, args } = options;
       const [stdout, stderr] = [[], []];
       const process = spawn('git', args ?? [], { cwd });
 
@@ -137,45 +125,32 @@ export async function cloneSparse(
 
     console.log('Pre-flight checks passed, cloning repo...');
     paths = paths.map((path) => path.replace(/"/g, '').replace(/^\./, ''));
-    await executeGitCommand({
-      cwd: workingCopyParent,
-      args: [
-        'clone',
-        '-n',
-        '--depth',
-        '1',
-        '--filter=tree:0',
-        repoUrl,
-        workingCopyDir
-      ]
-    });
+    await executeGitCommand(workingCopyParent, [
+      'clone',
+      '-n',
+      '--depth',
+      '1',
+      '--filter=tree:0',
+      repoUrl,
+      workingCopyDir
+    ]);
     console.log('Adding desired paths to sparse-checkout...');
     if (!globs) {
-      await executeGitCommand({
-        cwd,
-        args: ['sparse-checkout', 'set', '--no-cone', ...paths]
-      });
+      await executeGitCommand(cwd, [
+        'sparse-checkout',
+        'set',
+        '--no-cone',
+        ...paths
+      ]);
     } else {
-      await executeGitCommand({
-        cwd,
-        args: ['sparse-checkout', 'init']
-      });
-      await executeCommand({
-        cwd,
-        command: `echo !/* > .git/info/sparse-checkout`
-      });
+      await executeGitCommand(cwd, ['sparse-checkout', 'init']);
+      await executeCommand(`echo !/* > .git/info/sparse-checkout`, cwd);
       for (const path of paths) {
-        await executeCommand({
-          cwd,
-          command: `echo ${path} >> .git/info/sparse-checkout`
-        });
+        await executeCommand(`echo ${path} >> .git/info/sparse-checkout`, cwd);
       }
     }
     console.log('Performing final checkout...');
-    await executeGitCommand({
-      cwd,
-      args: ['checkout']
-    });
+    await executeGitCommand(cwd, ['checkout']);
     console.log('Complete!');
   } catch (error) {
     console.error(error);
