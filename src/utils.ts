@@ -113,13 +113,13 @@ export async function cloneSparse(
 
     const workingCopyDir = basename(cwd);
     const { globs, force } = program.opts();
-    if (force) {
+    if (existsSync(cwd) && force) {
       console.log('Removing existing working copy...');
       await rm(workingCopyDir, {
         force: true,
         recursive: true
       });
-    } else if (existsSync(cwd)) {
+    } else if (!force) {
       throw new Error(`${cwd} already exists, refusing to overwrite it!`);
     }
 
