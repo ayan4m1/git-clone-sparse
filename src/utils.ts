@@ -50,7 +50,7 @@ const executeCommand = async (
 
 const executeGitCommand = (
   cwd: string,
-  args?: string[]
+  args: string[] = []
 ): Promise<ExecuteResults> =>
   new Promise(
     (
@@ -58,7 +58,7 @@ const executeGitCommand = (
       reject: (reason?: string | Error) => void
     ) => {
       const [stdout, stderr] = [[], []];
-      const process = spawn('git', args ?? [], { cwd });
+      const process = spawn('git', args, { cwd });
 
       process.stdout.setEncoding('utf-8');
       process.stderr.setEncoding('utf-8');
@@ -70,7 +70,7 @@ const executeGitCommand = (
       );
       process.on('close', (code: number) => {
         if (code !== 0) {
-          reject(`Exited with code ${code}\n\n${stderr.join('\n')}`);
+          reject(`Exited with code ${code}:\n\n${stderr.join('\n')}`);
         } else {
           resolve([stdout.join('\n'), stderr.join('\n')]);
         }
