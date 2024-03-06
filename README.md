@@ -1,6 +1,6 @@
 # git-clone-sparse
 
-[![Package Version](https://badge.fury.io/js/@ayan4m1/git-clone-sparse.svg)](https://www.npmjs.com/package/@ayan4m1/git-clone-sparse)
+[![npm version](https://badge.fury.io/js/@ayan4m1%2Fgit-clone-sparse.svg)](https://badge.fury.io/js/@ayan4m1%2Fgit-clone-sparse)
 
 ## features
 
