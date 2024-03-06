@@ -30,7 +30,9 @@
   ],
   "license": "MIT",
   "main": "n/a",
-  "bin": "lib/index.js",
+  "bin": {
+    "git-clone-sparse": "lib/index.js"
+  },
   "module": "lib/index.js",
   "name": "@ayan4m1/git-clone-sparse",
   "repository": {
