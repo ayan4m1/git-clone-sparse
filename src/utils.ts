@@ -37,14 +37,12 @@ const isGitInstallValid = async (): Promise<boolean> => {
 
 const executeCommand = async (
   command: string,
-  cwd?: string,
-  args?: string[]
+  cwd: string = './',
+  args: string[] = []
 ): Promise<ExecuteResults> => {
   const { stdout, stderr } = await exec(
-    `${command} ${args?.join(' ') ?? ''}`.trim().replace(/\\n$/, ''),
-    {
-      cwd: cwd ?? './'
-    }
+    `${command} ${args.join(' ')}`.trim().replace(/\\n$/, ''),
+    { cwd }
   );
 
   return [stdout, stderr];
