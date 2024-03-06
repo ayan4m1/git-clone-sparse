@@ -14,3 +14,5 @@ program
   .option('-g, --globs', 'Allow use of glob patterns in <paths...> argument')
   .action(cloneSparse)
   .parse();
+
+export default cloneSparse;

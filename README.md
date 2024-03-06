@@ -25,3 +25,17 @@ OR
 > git-clone-sparse -g ./local-dir https://github.com/user/repo "\*\*/\*.safetensors"
 
 Each command creates a directory called `local-dir` in your current working directory and then clones the specified URL. If you use **glob mode**, pass the `-g` flag. If you want to use a list of directories instead, do not use the `-g` flag.
+
+## api
+
+```ts
+import cloneSparse from '@ayan4m1/git-clone-sparse';
+
+...
+
+await cloneSparse(
+  './new-repo-dir', // working copy directory
+  'https://github.com/ayan4m1/git-clone-sparse' // repo URL
+  ['./README.md'] // paths to include
+);
+```
