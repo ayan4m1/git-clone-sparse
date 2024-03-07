@@ -33,10 +33,13 @@ import cloneSparse from '@ayan4m1/git-clone-sparse';
 
 ...
 
-// todo: handle program.opts() call
 await cloneSparse(
   './new-repo-dir', // working copy directory
   'https://github.com/ayan4m1/git-clone-sparse' // repo URL
-  ['./README.md'] // paths to include
+  ['./README.md'] // paths to include,
+  {
+    globs: false,
+    force: false
+  } // optional options object
 );
 ```
