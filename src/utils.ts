@@ -1,6 +1,5 @@
 import { existsSync } from 'fs';
 import { promisify } from 'util';
-import { program } from 'commander';
 import { fileURLToPath } from 'url';
 import { coerce, satisfies } from 'semver';
 import { mkdir, readFile, rm } from 'fs/promises';
@@ -9,10 +8,12 @@ import { exec as rawExec, spawn } from 'child_process';
 
 export type ExecuteResults = [string, string];
 
-const exec = promisify(rawExec);
+export type CloneSparseOptions = {
+  globs: boolean;
+  force: boolean;
+};
 
-const createAppender = (array: string[]) => (chunk: string) =>
-  array.push(chunk);
+const exec = promisify(rawExec);
 
 const getInstallDirectory = (): string =>
   dirname(fileURLToPath(import.meta.url));
@@ -48,31 +49,17 @@ const executeCommand = async (
   return [stdout, stderr];
 };
 
-const executeGitCommand = (
-  cwd: string,
-  args: string[] = []
-): Promise<ExecuteResults> =>
+const executeGitCommand = (cwd: string, args: string[] = []): Promise<void> =>
   new Promise(
-    (
-      resolve: (value: ExecuteResults) => void,
-      reject: (reason?: string | Error) => void
-    ) => {
-      const [stdout, stderr] = [[], []];
+    (resolve: () => void, reject: (reason?: string | Error) => void) => {
       const process = spawn('git', args, { cwd });
 
-      process.stdout.setEncoding('utf-8');
-      process.stderr.setEncoding('utf-8');
-      process.stdout.on('data', createAppender(stdout));
-      process.stderr.on('data', createAppender(stderr));
-
-      process.on('error', () =>
-        reject(`Error occurred during execution:\n\n${stderr.join('\n')}`)
-      );
+      process.on('error', () => reject(`Error occurred during execution!`));
       process.on('close', (code: number) => {
         if (code !== 0) {
-          reject(`Exited with code ${code}:\n\n${stderr.join('\n')}`);
+          reject(`Exited with code ${code}!`);
         } else {
-          resolve([stdout.join('\n'), stderr.join('\n')]);
+          resolve();
         }
       });
     }
@@ -84,7 +71,8 @@ export const getPackageVersion = async (): Promise<string> =>
 export async function cloneSparse(
   cwd: string,
   repoUrl: string,
-  paths: string[]
+  paths: string[],
+  opts?: CloneSparseOptions
 ): Promise<void> {
   try {
     if (!repoUrl || !cwd || !paths.length) {
@@ -110,7 +98,7 @@ export async function cloneSparse(
     }
 
     const workingCopyDir = basename(cwd);
-    const { globs, force } = program.opts();
+    const { globs, force } = opts;
     if (existsSync(cwd) && force) {
       console.log('Removing existing working copy...');
       await rm(workingCopyDir, {
@@ -122,7 +110,6 @@ export async function cloneSparse(
     }
 
     console.log('Pre-flight checks passed, performing bare clone...');
-    paths = paths.map((path) => path.replace(/"/g, '').replace(/^\./, ''));
     await executeGitCommand(workingCopyParent, [
       'clone',
       '-n',
@@ -133,6 +120,7 @@ export async function cloneSparse(
       workingCopyDir
     ]);
     console.log('Adding desired paths to sparse-checkout...');
+    paths = paths.map((path) => path.replace(/"/g, '').replace(/^\./, ''));
     if (!globs) {
       await executeGitCommand(cwd, [
         'sparse-checkout',
