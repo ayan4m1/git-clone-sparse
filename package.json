@@ -38,7 +38,7 @@
   "name": "@ayan4m1/git-clone-sparse",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ayan4m1/git-clone-sparse"
+    "url": "git+https://github.com/ayan4m1/git-clone-sparse.git"
   },
   "scripts": {
     "build": "rollup -c --configPlugin typescript",
