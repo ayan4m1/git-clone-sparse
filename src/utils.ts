@@ -52,16 +52,17 @@ const executeCommand = async (
 const executeGitCommand = (cwd: string, args: string[] = []): Promise<void> =>
   new Promise(
     (resolve: () => void, reject: (reason?: string | Error) => void) => {
-      const process = spawn('git', args, { cwd });
+      const stderr = [];
+      const process = spawn('git', args, { cwd, stdio: [0, 0, 'pipe'] });
 
+      process.stderr.setEncoding('utf-8');
+      process.stderr.on('data', (chunk) => stderr.push(chunk));
       process.on('error', () => reject(`Error occurred during execution!`));
-      process.on('close', (code: number) => {
-        if (code !== 0) {
-          reject(`Exited with code ${code}!`);
-        } else {
-          resolve();
-        }
-      });
+      process.on('close', (code: number) =>
+        code === 0
+          ? resolve()
+          : reject(`Exited with code ${code}. Details:\n\n${stderr.join('')}`)
+      );
     }
   );
 
