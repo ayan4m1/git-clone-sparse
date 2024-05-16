@@ -106,7 +106,7 @@ export async function cloneSparse(
         force: true,
         recursive: true
       });
-    } else if (!force) {
+    } else if (existsSync(cwd)) {
       throw new Error(`${cwd} already exists, refusing to overwrite it!`);
     }
 
