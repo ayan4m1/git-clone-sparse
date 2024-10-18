@@ -31,3 +31,5 @@ try {
 }
 
 export default cloneSparse;
+
+export { CloneSparseOptions } from './utils.js';
