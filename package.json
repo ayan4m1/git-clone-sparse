@@ -2,28 +2,34 @@
   "author": "ayan4m1 <andrew@bulletlogic.com>",
   "description": "CLI and library to perform sparse Git clones.",
   "devDependencies": {
-    "@eslint/js": "^9.12.0",
-    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/cz-commitlint": "^19.8.1",
+    "@eslint/js": "^9.34.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "@types/node": "^22.7.6",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/node": "^24.3.0",
     "@types/rollup-plugin-auto-external": "^2.0.5",
-    "auto-changelog": "^2.5.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.12.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-import-x": "^4.3.1",
-    "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
-    "prettier": "^3.3.3",
-    "rollup": "^4.24.0",
+    "@types/semver": "^7.7.0",
+    "commitizen": "^4.3.1",
+    "commitlint": "^19.8.1",
+    "cross-env": "^10.0.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "inquirer": "9",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "rollup": "^4.48.1",
     "rollup-plugin-auto-external": "^2.0.0",
-    "rollup-plugin-shebang-bin": "^0.0.7",
-    "tslib": "^2.8.0",
-    "typescript": "~5.6.3",
-    "typescript-eslint": "^8.10.0"
+    "rollup-plugin-shebang-bin": "^0.1.0",
+    "semantic-release": "^24.2.7",
+    "tslib": "^2.8.1",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.41.0"
   },
   "engines": {
     "node": ">=18"
@@ -33,9 +39,7 @@
   ],
   "license": "MIT",
   "main": "n/a",
-  "bin": {
-    "git-clone-sparse": "lib/index.js"
-  },
+  "bin": "lib/index.js",
   "module": "lib/index.js",
   "name": "@ayan4m1/git-clone-sparse",
   "repository": {
@@ -47,7 +51,6 @@
     "develop": "rollup -c -w --configPlugin typescript",
     "lint": "eslint ./src/**/*.ts",
     "prepack": "cross-env NODE_ENV=production rollup -c --configPlugin typescript",
-    "version": "auto-changelog -p -b 10 -l 10 && git add CHANGELOG.md",
     "prepare": "husky"
   },
   "type": "module",
@@ -55,6 +58,7 @@
   "version": "0.4.1",
   "dependencies": {
     "commander": "12.1.0",
-    "semver": "7.6.3"
-  }
+    "semver": "7.7.2"
+  },
+  "packageManager": "yarn@4.9.3"
 }
